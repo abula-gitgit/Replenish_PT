@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Replenish - Household Replacement Cycle Manager</title>
+  <meta name="description" content="Learn about Replenish, the free web app that tracks replacement cycles for household consumables and automatically calculates next due dates and advance restock reminders.">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <style>
+    :root {
+      --primary: #059669;
+      --primary-dark: #065f46;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      padding: 24px 16px 64px;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+      font-size: 13px; font-weight: 600; color: var(--primary-dark);
+      background: #ffffff; border: 1px solid var(--border); border-radius: 10px;
+      text-decoration: none; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .btn-back:hover { background: #f1f5f9; }
+    .card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 24px; padding: 40px 36px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+      position: relative; overflow: hidden;
+    }
+    .card::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #10b981, #14b8a6, #0284c7);
+    }
+    h1 { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 8px; letter-spacing: -0.02em; }
+    .meta { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; padding-bottom: 18px; border-bottom: 1px solid var(--border); line-height: 1.6; }
+    .concept-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0 28px; }
+    @media (max-width: 640px) { .concept-pills { grid-template-columns: 1fr; } }
+    .concept-pill {
+      background: #f8fafc; border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .pill-icon {
+      width: 32px; height: 32px; border-radius: 10px; background: #ecfdf5; color: #047857;
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0;
+    }
+    .pill-title { font-size: 13px; font-weight: 700; color: #0f172a; }
+    .pill-sub { font-size: 11px; color: #64748b; }
+    h2 { font-size: 19px; font-weight: 800; color: #0f172a; margin: 36px 0 14px; letter-spacing: -0.01em; }
+    p { font-size: 14px; color: #334155; margin-bottom: 14px; }
+    .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+    @media (max-width: 640px) { .features-grid { grid-template-columns: 1fr; } }
+    .feature-item {
+      background: #f8fafc; border: 1px solid var(--border); border-radius: 16px; padding: 20px;
+      transition: all 0.2s ease;
+    }
+    .feature-item:hover {
+      background: #ffffff; border-color: #a7f3d0; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+    }
+    .feature-num { font-size: 11px; font-weight: 800; color: #059669; background: #ecfdf5; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-bottom: 8px; }
+    .feature-item h3 { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+    .feature-item p { font-size: 13px; color: #475569; margin-bottom: 0; line-height: 1.6; }
+    .step-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px; padding: 22px; margin: 20px 0; }
+    .step-box ol { padding-left: 20px; font-size: 14px; color: #166534; }
+    .step-box li { margin-bottom: 10px; }
+    .step-box li:last-child { margin-bottom: 0; }
+    .faq-list { margin: 24px 0; }
+    .faq-item { background: #ffffff; border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .faq-q { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 8px; display: flex; align-items: baseline; gap: 8px; }
+    .faq-q-badge { background: #ecfdf5; color: #059669; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 6px; }
+    .faq-a { font-size: 13px; color: #475569; line-height: 1.65; margin-bottom: 0; }
+    .before-after-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+    @media (max-width: 640px) { .before-after-grid { grid-template-columns: 1fr; } }
+    .ba-box { border-radius: 18px; padding: 22px; }
+    .ba-before { background: linear-gradient(135deg, #fff1f2 0%, #fff5f5 100%); border: 1px solid #fecdd3; color: #881337; }
+    .ba-after { background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%); border: 1px solid #a7f3d0; color: #064e3b; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.05); }
+    .ba-title { font-size: 13px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .ba-list { list-style: none; font-size: 13px; }
+    .ba-list li { margin-bottom: 8px; line-height: 1.5; display: flex; gap: 8px; align-items: flex-start; }
+    .usecase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0; }
+    @media (max-width: 640px) { .usecase-grid { grid-template-columns: 1fr; } }
+    .usecase-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    .usecase-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 8px; background: #e2e8f0; color: #334155; margin-bottom: 8px; }
+    .usecase-title { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+    .usecase-desc { font-size: 12px; color: #64748b; line-height: 1.55; margin-bottom: 0; }
+    .mockup-container {
+      background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+      border-radius: 20px; padding: 24px; color: #ffffff; margin: 24px 0;
+    }
+    .mockup-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+    @media (max-width: 640px) { .mockup-grid { grid-template-columns: 1fr; } }
+    .mockup-card {
+      background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px; padding: 14px; font-size: 12px;
+    }
+    .mockup-badge { font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px; display: inline-block; margin-bottom: 6px; }
+    .badge-urgent { background: rgba(244, 63, 94, 0.2); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
+    .badge-restock { background: rgba(14, 165, 233, 0.2); color: #7dd3fc; border: 1px solid rgba(14, 165, 233, 0.4); }
+    .badge-normal { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .mockup-bar { height: 6px; width: 100%; background: #334155; border-radius: 999px; overflow: hidden; margin: 8px 0; }
+    .mockup-progress { height: 100%; border-radius: 999px; }
+    .voice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 20px 0; }
+    @media (max-width: 640px) { .voice-grid { grid-template-columns: 1fr; } }
+    .voice-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 14px; padding: 16px; font-size: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+    .voice-stars { color: #f59e0b; font-size: 12px; margin-bottom: 6px; }
+    .voice-author { font-size: 11px; color: #94a3b8; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; font-weight: 600; }
+    .stats-banner {
+      background: linear-gradient(135deg, #065f46 0%, #0f172a 100%);
+      border-radius: 18px; padding: 20px; color: #ffffff; margin: 24px 0;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;
+    }
+    @media (max-width: 640px) { .stats-banner { grid-template-columns: 1fr 1fr; } }
+    .stats-num { font-size: 24px; font-weight: 900; color: #6ee7b7; }
+    .stats-label { font-size: 11px; color: #cbd5e1; }
+    .fact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0; }
+    @media (max-width: 640px) { .fact-grid { grid-template-columns: 1fr; } }
+    .fact-card { background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px; padding: 16px; font-size: 12px; }
+    .fact-title { font-weight: 800; color: #92400e; margin-bottom: 4px; font-size: 13px; }
+    .cta-banner {
+      background: linear-gradient(135deg, #065f46 0%, #047857 50%, #0f172a 100%);
+      color: #ffffff; border-radius: 20px; padding: 28px 24px; margin-top: 36px; text-align: center;
+    }
+    .cta-banner h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .cta-banner p { font-size: 13px; color: #a7f3d0; margin-bottom: 18px; }
+    .btn-cta {
+      display: inline-flex; align-items: center; gap: 6px; padding: 10px 24px;
+      font-size: 13px; font-weight: 700; color: #064e3b; background: #ffffff;
+      border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: all 0.2s ease;
+    }
+    .btn-cta:hover { background: #ecfdf5; transform: translateY(-1px); }
+    footer { text-align: center; margin-top: 40px; font-size: 12px; color: var(--text-muted); }
+    footer a { margin: 0 8px; color: var(--text-muted); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-nav">
+      <a href="/" class="btn-back">← Open App</a>
+      <span style="font-size: 13px; font-weight: 600; color: #047857;">Replenish · Replacement Cycle Manager</span>
+    </div>
+
+    <div class="card">
+      <h1>About Replenish</h1>
+      <div class="meta">Visualize household replacement cycles and maintain a clean, healthy, and waste-free home with smart reminders.</div>
+
+      <div class="concept-pills">
+        <div class="concept-pill">
+          <div class="pill-icon">$0</div>
+          <div>
+            <div class="pill-title">100% Free</div>
+            <div class="pill-sub">Zero setup or monthly fees</div>
+          </div>
+        </div>
+        <div class="concept-pill">
+          <div class="pill-icon">✓</div>
+          <div>
+            <div class="pill-title">No Sign-Up Required</div>
+            <div class="pill-sub">Ready to use immediately in browser</div>
+          </div>
+        </div>
+        <div class="concept-pill">
+          <div class="pill-icon">🔒</div>
+          <div>
+            <div class="pill-title">100% Local Storage</div>
+            <div class="pill-sub">No cloud uploads · Complete privacy</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mockup Section -->
+      <div class="mockup-container">
+        <div style="font-size: 11px; font-weight: 800; color: #6ee7b7; text-transform: uppercase;">Dashboard Preview</div>
+        <div style="font-size: 18px; font-weight: 800; margin-top: 4px;">Simple, Intuitive Management</div>
+        <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Track remaining days and restock status for every household item at a glance.</div>
+        
+        <div class="mockup-grid">
+          <div class="mockup-card">
+            <span class="mockup-badge badge-urgent">2 Days Left (Due Soon)</span>
+            <div style="font-weight: 700; font-size: 13px;">Dish Sponge</div>
+            <div style="color: #94a3b8; font-size: 11px;">Cycle: Every 2 Weeks</div>
+            <div class="mockup-bar"><div class="mockup-progress" style="width: 86%; background: #f43f5e;"></div></div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8;">
+              <span>Next: Nov 3</span>
+              <span style="color: #6ee7b7; font-weight: 700;">Replaced Today ✓</span>
+            </div>
+          </div>
+
+          <div class="mockup-card">
+            <span class="mockup-badge badge-restock">Restock Window (Check Stock)</span>
+            <div style="font-weight: 700; font-size: 13px;">Water Filter Cartridge</div>
+            <div style="color: #94a3b8; font-size: 11px;">Model: HGC9SW</div>
+            <div class="mockup-bar"><div class="mockup-progress" style="width: 92%; background: #0ea5e9;"></div></div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8;">
+              <span style="color: #38bdf8;">Reorder on Amazon →</span>
+              <span>In Stock</span>
+            </div>
+          </div>
+
+          <div class="mockup-card">
+            <span class="mockup-badge badge-normal">On Track (24 Days Left)</span>
+            <div style="font-weight: 700; font-size: 13px;">Electric Toothbrush Head</div>
+            <div style="color: #94a3b8; font-size: 11px;">Cycle: Every 1 Month</div>
+            <div class="mockup-bar"><div class="mockup-progress" style="width: 20%; background: #10b981;"></div></div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8;">
+              <span>Next: Nov 25</span>
+              <span>View Details</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2>Eye-Opening Facts Behind Everyday Consumables</h2>
+      <div class="fact-grid">
+        <div class="fact-card">
+          <div class="fact-title">⚠️ Kitchen Sponges (Recommended: 2 Weeks)</div>
+          <p style="margin-bottom: 0;">A kitchen sponge used for two weeks reaches a higher bacterial density than a toilet seat. Replacing it every two weeks prevents spreading bacteria onto clean dishes.</p>
+        </div>
+        <div class="fact-card">
+          <div class="fact-title">⚠️ Toothbrushes (Recommended: 1 Month)</div>
+          <p style="margin-bottom: 0;">Even slightly splayed bristles reduce plaque removal efficiency by nearly 40%. Because bacteria thrive at the damp base of bristles, dental associations recommend monthly replacement.</p>
+        </div>
+      </div>
+      <p>Water filter cartridges, electric toothbrush heads, razor blades, range hood filters, and refrigerator ice maker filters are just a few of the many everyday items whose hygiene and performance degrade without regular replacement.</p>
+      <p>Because replacement intervals vary from days and weeks to months or years, it is easy to forget when an item was last changed—or realize you are out of spares right when you need one.</p>
+      <p>Replenish centralizes the lifecycle of all your household consumables, automatically calculating both the next replacement date and your advance restock reminder date.</p>
+
+      <h2>How Replenish Transforms Your Routine</h2>
+      <div class="before-after-grid">
+        <div class="ba-box ba-before">
+          <div class="ba-title">✕ Common Frustrations</div>
+          <ul class="ba-list">
+            <li>Forgetting when an item was last replaced and leaving it for months</li>
+            <li>Running out of spare filters or blades right when you want to swap them</li>
+            <li>Having to look up obscure part numbers every time you reorder</li>
+            <li>Family members not knowing who replaced what or when</li>
+          </ul>
+        </div>
+        <div class="ba-box ba-after">
+          <div class="ba-title">✓ With Replenish</div>
+          <ul class="ba-list">
+            <li>Next due dates are calculated automatically and shown on your dashboard</li>
+            <li>Advance restock reminders notify you before you run out of spares</li>
+            <li>One-click model number copy and instant Amazon search make reordering fast</li>
+            <li>One tap on "Replaced Today" logs your history and resets the cycle</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>6 Core Features to Simplify Home Maintenance</h2>
+      <div class="features-grid">
+        <div class="feature-item">
+          <h3>1. Auto Due Date & Lead-Time Calculation</h3>
+          <p>Simply enter the replacement cycle and last replaced date. Replenish calculates both the next due date and an advance restock date so you never run out of spares on replacement day.</p>
+        </div>
+        <div class="feature-item">
+          <h3>2. Monthly Calendar View</h3>
+          <p>See all upcoming replacement dates and restock reminders mapped across a monthly calendar—perfect for planning shopping runs and weekend chores.</p>
+        </div>
+        <div class="feature-item">
+          <h3>3. Science-Backed Replacement Guides</h3>
+          <p>Explore recommended cycles and wear-and-tear signs based on microbiological research and manufacturer guidelines, with one-tap item registration.</p>
+        </div>
+        <div class="feature-item">
+          <h3>4. Model Number Storage & Instant Reorder</h3>
+          <p>Save filter and blade model numbers for one-tap copying, and jump directly to Amazon search results to reorder without hassle.</p>
+        </div>
+        <div class="feature-item">
+          <h3>5. Replacement Timeline & CSV Export</h3>
+          <p>Keep a chronological log of all past replacements, with full CSV export and import support for easy backup and device migration.</p>
+        </div>
+        <div class="feature-item">
+          <h3>6. No Account Needed · 100% On-Device</h3>
+          <p>Zero registration required. All data is saved locally inside your browser’s LocalStorage, keeping your household data completely private.</p>
+        </div>
+      </div>
+
+      <h2>Recommended Use Cases by Category</h2>
+      <div class="usecase-grid">
+        <div class="usecase-card">
+          <span class="usecase-badge">Kitchen & Bath</span>
+          <div class="usecase-title">Dish Sponges / Water Filter Cartridges / Kitchen Cloths</div>
+          <p class="usecase-desc">Replace bacteria-prone dish sponges (every 2 weeks) and water purifier cartridges (every 2–3 months) on a sanitary schedule.</p>
+        </div>
+        <div class="usecase-card">
+          <span class="usecase-badge">Healthcare & Beauty</span>
+          <div class="usecase-title">Toothbrushes / Electric Brush Heads / Shaver Blades</div>
+          <p class="usecase-desc">Prevent reduced plaque removal from frayed toothbrushes (1 month) and skin irritation from dull razor blades with timely alerts.</p>
+        </div>
+        <div class="usecase-card">
+          <span class="usecase-badge">Appliances & Home Facilities</span>
+          <div class="usecase-title">A/C Filters / Humidifier Filters / Ice Maker Filters</div>
+          <p class="usecase-desc">Manage humidifier filters and refrigerator ice maker filters prone to mold and biofilm buildup, protecting your indoor air and water.</p>
+        </div>
+        <div class="usecase-card">
+          <span class="usecase-badge">Emergency & Safety</span>
+          <div class="usecase-title">Emergency Food & Water / Batteries / Portable Toilets / First Aid</div>
+          <p class="usecase-desc">Prevent multi-year disaster preparedness supplies (3–5 years) from expiring unnoticed and maintain an effortless rolling stock.</p>
+        </div>
+      </div>
+
+      <h2>What Users Are Saying</h2>
+      <div class="voice-grid">
+        <div class="voice-card">
+          <div class="voice-stars">★★★★★</div>
+          <div style="font-weight: 700; margin-bottom: 6px;">"Easy for the whole family to stay in sync"</div>
+          <p style="margin-bottom: 0; color: #475569;">We never forget when we last changed our toothbrushes or water filter anymore. Checking the dashboard makes replacing items on the spot effortless.</p>
+          <div class="voice-author">Couple in their 30s · Dual-income household</div>
+        </div>
+        <div class="voice-card">
+          <div class="voice-stars">★★★★★</div>
+          <div style="font-weight: 700; margin-bottom: 6px;">"Model number copy & Amazon search are so handy"</div>
+          <p style="margin-bottom: 0; color: #475569;">Looking up shaver blade part numbers used to be a hassle. Copying the model number in one tap and ordering on Amazon saves so much time.</p>
+          <div class="voice-author">Professional in their 20s · Solo apartment</div>
+        </div>
+        <div class="voice-card">
+          <div class="voice-stars">★★★★★</div>
+          <div style="font-weight: 700; margin-bottom: 6px;">"No more expired emergency food rations"</div>
+          <p style="margin-bottom: 0; color: #475569;">Replenish tracks 3-to-5-year expiration dates without fail, helping us rotate emergency water and food supplies with zero waste.</p>
+          <div class="voice-author">Parent in their 40s · Emergency Prep</div>
+        </div>
+      </div>
+
+      <!-- Numbers Banner -->
+      <div class="stats-banner">
+        <div>
+          <div class="stats-num">$0</div>
+          <div class="stats-label">100% Free</div>
+        </div>
+        <div>
+          <div class="stats-num">0 sec</div>
+          <div class="stats-label">No Sign-Up</div>
+        </div>
+        <div>
+          <div class="stats-num">40+</div>
+          <div class="stats-label">Hygiene Guides</div>
+        </div>
+        <div>
+          <div class="stats-num">100%</div>
+          <div class="stats-label">Local Storage</div>
+        </div>
+      </div>
+
+      <h2>How It Works (3 Simple Steps)</h2>
+      <div class="step-box">
+        <ol>
+          <li><strong>Register Items:</strong> Select from the built-in preset catalog or enter a custom item name and replacement cycle.</li>
+          <li><strong>Check Due Dates:</strong> Review "Due Today" and "Restock Window" statuses on the dashboard or monthly calendar.</li>
+          <li><strong>Log Replacements:</strong> Tap "Replaced Today" once you swap an item—your next due date updates automatically.</li>
+        </ol>
+      </div>
+
+      <h2>Frequently Asked Questions (FAQ)</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q"><span class="faq-q-badge">Q</span> Is Replenish completely free to use?</div>
+          <p class="faq-a">Yes, Replenish is 100% free. Item registration, automatic due-date calculation, hygiene guides, calendar view, history logs, and CSV export are all available at no cost.</p>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span class="faq-q-badge">Q</span> Do I need to register an account or log in?</div>
+          <p class="faq-a">No. You can use every feature immediately in your browser without entering an email address, password, or creating an account.</p>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span class="faq-q-badge">Q</span> Is my registered data ever sent to an external server?</div>
+          <p class="faq-a">Never. Replenish stores all registered data strictly inside your browser's local storage (LocalStorage) on your device.</p>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span class="faq-q-badge">Q</span> Can I install Replenish on my smartphone home screen?</div>
+          <p class="faq-a">Yes! Replenish supports PWA installation. Use "Add to Home Screen" in iOS Safari or "Install App" in Android Chrome to launch it full-screen like a native app.</p>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span class="faq-q-badge">Q</span> Can I transfer my data when switching to a new phone?</div>
+          <p class="faq-a">Yes. From the Data Management menu, you can export your registered items and replacement history as a CSV file and import it on your new device.</p>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span class="faq-q-badge">Q</span> How are the recommended replacement cycles in the guides determined?</div>
+          <p class="faq-a">They are based on official manufacturer manuals, dental and public health association guidelines, and peer-reviewed microbiological research, balancing household hygiene and durability.</p>
+        </div>
+      </div>
+      <div class="cta-banner">
+        <h3>Make Home Maintenance Effortless Starting Today.</h3>
+        <p>Start by registering just one everyday item—like your kitchen sponge or toothbrush.</p>
+        <a href="/" class="btn-cta">Open Tracker →</a>
+      </div>
+    </div>
+
+    <footer>
+      <div>© 2026 STONE PLANNING · Replenish</div>
+      <div style="margin-top: 8px;">
+        <a href="/about.html">Overview</a>
+        <a href="/guide.html">Cycle Guide</a>
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms & Disclaimer</a>
+        <a href="/contact.html">About Us & Contact</a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
